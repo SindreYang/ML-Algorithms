@@ -7,9 +7,7 @@ import random
 
 # 从文件中读入训练样本的数据
 def loadDataSet():
-    dataMat = []
-    for i in range (10):
-        dataMat.append (random.normalvariate (0, 1))
+    dataMat = [random.normalvariate (0, 1) for _ in range (10)]
     labelMat = [int(i) for i in dataMat]
     return dataMat,labelMat
     
@@ -25,7 +23,7 @@ def gradAscent(dataMatIn, classLabels):
     alpha = 0.001  # 学习率
     maxCycles = 1000
     weights = ones((n, 1))  # 初始参数, 3 x 1
-    for k in range(maxCycles):              # heavy on matrix operations
+    for _ in range(maxCycles):
         h = sigmoid(dataMatrix * weights)     # 模型预测值, 90 x 1
         error = h - labelMat.T              # 真实值与预测值之间的误差, 90 x 1
         temp = dataMatrix.transpose() * error  # 所有参数的偏导数, 3 x 1

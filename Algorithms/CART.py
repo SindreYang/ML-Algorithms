@@ -42,8 +42,7 @@ def gini(label):
             count[curlabel] = 0
         count[curlabel] += 1
     pi_c = array(list(count.values()))*1.0/n
-    g = sum(1-pi_c**2)
-    return g
+    return sum(1-pi_c**2)
     
 #testcode:
 #print gini(trainlabel)
@@ -73,14 +72,10 @@ def splitdata(oridata,splitfea_idx):
 def idx2data(oridata,label,splitidx,fea_idx):
     idxl = splitidx[0] #split_less_indices
     idxg = splitidx[1] #split_greater_indices
-    datal = []
-    datag = []
     labell = []
     labelg = []
-    for i in idxl:
-        datal.append(append(oridata[i][:fea_idx],oridata[i][fea_idx+1:]))
-    for i in idxg:
-        datag.append(append(oridata[i][:fea_idx],oridata[i][fea_idx+1:]))
+    datal = [append(oridata[i][:fea_idx],oridata[i][fea_idx+1:]) for i in idxl]
+    datag = [append(oridata[i][:fea_idx],oridata[i][fea_idx+1:]) for i in idxg]
     labell = label[idxl]
     labelg = label[idxg]
     return datal,datag,labell,labelg
@@ -99,12 +94,12 @@ def choosebest_splitnode(oridata,label):
         idxset_less,idxset_greater = splitdata(oridata,fea_i)
         prob_less = float(len(idxset_less))/n
         prob_greater = float(len(idxset_greater))/n
-        
+
         #entropy(value|X) = \sum{p(xi)*entropy(value|X=xi)}
         #cur_entropy += prob_less*calentropy(label[idxset_less])
         #cur_entropy += prob_greater * calentropy(label[idxset_greater])
         #info_gain = base_entropy - cur_entropy #notice gain is before minus after
-        
+
         cur_gini += prob_less*gini(label[idxset_less])
         cur_gini += prob_greater * gini(label[idxset_greater])        
         #info_gain = base_entropy - cur_gini #notice gain is before minus after
@@ -127,7 +122,7 @@ def buildtree(oridata, label):
     #stop when all samples in this subset belongs to one class
     if listlabel.count(label[0])==label.size:
         return label[0]
-        
+
     #return the majority of samples' label in this subset if no extra features avaliable
     if len(feanamecopy)==0:
         cnt = {}
@@ -141,7 +136,7 @@ def buildtree(oridata, label):
                 maxx = cnt[keys]
                 maxkey = keys
         return maxkey
-    
+
     bestsplit_fea = choosebest_splitnode(oridata,label) #get the best splitting feature
     print(bestsplit_fea,len(oridata[0]))
     cur_feaname = feanamecopy[bestsplit_fea] # add the feature name to dictionary
@@ -150,7 +145,7 @@ def buildtree(oridata, label):
     del(feanamecopy[bestsplit_fea]) #delete current feature from feaname
     split_idx = splitdata(oridata,bestsplit_fea) #split_idx: the split index for both less and greater
     data_less,data_greater,label_less,label_greater = idx2data(oridata,label,split_idx,bestsplit_fea)
-    
+
     #build the tree recursively, the left and right tree are the "<" and ">" branch, respectively
     nodedict[cur_feaname]["<"] = buildtree(data_less,label_less)
     nodedict[cur_feaname][">"] = buildtree(data_greater,label_greater)
@@ -168,12 +163,9 @@ def classify(mytree,testdata):
     fea_idx = feaname.index(fea_name) #the index of feature 'fea_name'
     val = testdata[fea_idx]
     nextbranch = mytree[fea_name]
-    
+
     #judge the current value > or < the pivot (average)
-    if val>args[fea_idx]:
-        nextbranch = nextbranch[">"]
-    else:
-        nextbranch = nextbranch["<"]
+    nextbranch = nextbranch[">"] if val>args[fea_idx] else nextbranch["<"]
     return classify(nextbranch,testdata)
 
 #testcode
