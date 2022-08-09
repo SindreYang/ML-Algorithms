@@ -32,11 +32,11 @@ for i,clf in enumerate((linear_svc,rbf_svc,poly_svc)):
     Z = clf.predict(np.c_[xx.ravel(),yy.ravel()])
     Z = Z.reshape(xx.shape)
     #Z = np.random.randint(0,3,xx.shape)
-    
+
     #画出决策边界
     plt.contourf(xx,yy,Z,cmap = plt.cm.cool)
     plt.scatter(X[:,0],X[:,1],c = Y, cmap = plt.cm.cool)
     plt.title(titles[i])
-    
+
 plt.show()
     

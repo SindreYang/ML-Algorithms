@@ -93,7 +93,7 @@ def change_data(x):
 
 if __name__=="__main__":
     #dat,lab = loadSimpData()
-    
+
     from sklearn import svm, datasets
 
     iris = datasets.load_iris();
@@ -103,8 +103,8 @@ if __name__=="__main__":
     dat = iris.data[0:100,0:3] #only use the first two features        
     # change data
     dat = change_data(dat)
-    
-    lab = iris.target[0:100]
+
+    lab = iris.target[:100]
     lab[lab==0]=-1    
 
     weakClassArr,aggClassEst = adaBoostTrainDS(dat,lab)
